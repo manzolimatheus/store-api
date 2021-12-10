@@ -17,6 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_user');
             $table->json('order');
+            $table->decimal('total');
             $table->timestamps();
         });
 

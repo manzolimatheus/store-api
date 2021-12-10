@@ -14,5 +14,6 @@ class Product extends Model
         'price',
         'perishable',
         'id_tag',
+        'image',
     ];
 }

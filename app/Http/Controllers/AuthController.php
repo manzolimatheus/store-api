@@ -71,29 +71,16 @@ class AuthController extends Controller
         return $request->user();
     }
 
-    public function update(Request $request)
-    {
-        try {
-            $user = User::findOrFail($request->user()['id']);
-
-            $user->update($request->all());
-
-            return response()->json('Usuário atualizado com sucesso!', 201);
-        } catch (Exception $e) {
-            return response()->json('Erro ao atualizar usuário', 500);
-        }
-    }
-
     public function delete(Request $request)
     {
         try {
-            $user = User::findOrFail($request->user()['id']);
+            $user = User::findOrFail($request->id);
 
             $user->delete();
 
-            return response()->json('Usuário deletado com sucesso!', 201);
+            return response()->json(['message' => 'Usuário deletado com sucesso!', 'status' => 201]);
         } catch (Exception $e) {
-            return response()->json('Ocorreu um erro ao deletar este usuário!', 500);
+            return response()->json(['message' => 'Ocorreu um erro ao deletar este usuário!', 'status' => 500]);
         }
     }
 

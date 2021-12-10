@@ -22,16 +22,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/user', [AuthController::class, 'profile'])->middleware('auth:sanctum');
-Route::put('/user', [AuthController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/user', [AuthController::class, 'delete'])->middleware('auth:sanctum');
 Route::get('/users/qtd', [AuthController::class, 'getCount']);
 
 // Rotas do CRUD
 Route::get('{key}/products/',[ProductController::class, 'get']);
 Route::get('{key}/products/tag/{id_tag}',[ProductController::class, 'getTag']);
-Route::post('{key}/products', [ProductController::class, 'create']);
-Route::put('{key}/product/{id}', [ProductController::class, 'update']);
-Route::delete('{key}/product/{id}', [ProductController::class, 'delete']);
+Route::post('{key}/products', [ProductController::class, 'create'])->middleware('auth:sanctum');
+Route::put('{key}/product/{id}', [ProductController::class, 'update'])->middleware('auth:sanctum');
+Route::delete('{key}/product/{id}', [ProductController::class, 'delete'])->middleware('auth:sanctum');
 
 //Categorias
 Route::get('{key}/tags', [TagController::class, 'get']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -20,7 +21,10 @@ class ProductController extends Controller
     {
         switch ($key) {
             case $this->key:
-                $products = Product::paginate(9);
+                $products = DB::table('products')
+                ->join('tags', 'id_tag', '=', 'tags.id')
+                ->select('products.*', 'tags.name as tag')
+                ->paginate(9);
 
                 return response()->json($products);
                 break;
@@ -35,7 +39,12 @@ class ProductController extends Controller
     {
         switch ($key) {
             case $this->key:
-                $products = Product::where('id_tag', $id_tag)->paginate(9);
+
+                $products = DB::table('products')
+                ->join('tags', 'id_tag', '=', 'tags.id')
+                ->select('products.*', 'tags.name as tag')
+                ->where('id_tag', $id_tag)
+                ->paginate(9);
 
                 return response()->json($products);
                 break;
@@ -60,9 +69,9 @@ class ProductController extends Controller
                     $product->image = $request->image;
                     $product->save();
 
-                    return response()->json('Produto salvo com sucesso!', 201);
+                    return response()->json(['message' => 'Produto salvo com sucesso!', 'status' => 201]);
                 } catch (Exception $e) {
-                    return response()->json('Erro ao cadastrar o produto!', 500);
+                    return response()->json('Erro ao cadastrar o produto!' . $e, 500);
                 }
                 break;
 
@@ -72,7 +81,7 @@ class ProductController extends Controller
         }
     }
 
-    public function update(Request $request, $key, $id)
+    public function update($key, $id, Request $request)
     {
         switch ($key) {
             case $this->key:
@@ -82,9 +91,9 @@ class ProductController extends Controller
 
                     $product->update($request->all());
 
-                    return response()->json('Dados atualizados com sucesso!', 201);
+                    return response()->json(['message' => 'Dados atualizados com sucesso!', 'status' => 201]);
                 } catch (Exception $e) {
-                    return response()->json('Erro ao atualizar produto! |' . $e, 500);
+                    return response()->json(['message' => 'Erro ao atualizar produto!', 'status' => 500]);
                 }
                 break;
 
@@ -104,9 +113,9 @@ class ProductController extends Controller
 
                     $product->delete();
 
-                    return response()->json('Produto deletado com sucesso!', 201);
+                    return response()->json(['message' => 'Produto deletado com sucesso!', 'status' => 201]);
                 } catch (Exception $e) {
-                    return response()->json('Erro ao deletar produto!', 500);
+                    return response()->json(['message' => 'Erro ao deletar produto!','status' => 500]);
                 }
                 break;
 

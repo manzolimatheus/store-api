@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Exception;
 use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -20,7 +22,8 @@ class OrderController extends Controller
     {
         switch ($key) {
             case $this->key:
-                $orders = Order::where('id_user', $request->id)->paginate(9);
+                $orders = Order::paginate(9);
+
 
                 return response()->json($orders);
                 break;
@@ -33,6 +36,12 @@ class OrderController extends Controller
 
     public function create($key, Request $request)
     {
+        try {
+            $product = Product::findOrFail(json_decode($request[0]['id']));
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Este produto não existe mais!', 'status' => 500]);
+        }
+
         switch ($key) {
             case $this->key:
                 try {
@@ -40,6 +49,7 @@ class OrderController extends Controller
 
                     $neworder->id_user = $request[0]['id_user'];
                     $neworder->order = json_encode($request->all());
+                    $neworder->total = $request[0]['total'];
                     $neworder->save();
 
                     return response()->json(['message' => 'Pedido salvo com sucesso!', 'status' => 201]);
